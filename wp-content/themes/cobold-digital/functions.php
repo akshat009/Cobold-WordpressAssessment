@@ -431,7 +431,6 @@ function cmb2_sample_metaboxes()
 		'id' => 'work_progress_textarea_small',
 		'type' => 'textarea_small'
 	));
-	//-add table for section
 
 	$group_field_id = $cmb->add_field(array(
 		'id'          => 'work_progress_repeat_group',
@@ -466,7 +465,7 @@ function cmb2_sample_metaboxes()
 		'type'    => 'file',
 		// Optional:
 		'options' => array(
-			'url' => true, 
+			'url' => true,
 		),
 		'text'    => array(
 			'add_upload_file_text' => 'Add Icon Image' // Change upload button text. Default: "Add or Upload File"
@@ -505,22 +504,19 @@ function cmb2_sample_metaboxes()
 			'add_button'        => __('Add Another Entry', 'cmb2'),
 			'remove_button'     => __('Remove Entry', 'cmb2'),
 			'sortable'          => true,
-			// 'closed'         => true, // true to have the groups closed by default
-			// 'remove_confirm' => esc_html__( 'Are you sure you want to remove?', 'cmb2' ), // Performs confirmation before removing group.
+			'closed'         => true, // true to have the groups closed by default
 		),
 	));
 	$cmb->add_group_field($group_field_id, array(
 		'name' => 'Entry Title',
 		'id'   => 'title',
 		'type' => 'text',
-		// 'repeatable' => true, // Repeatable fields are supported w/in repeatable groups (for most types)
 	));
 
 	$cmb->add_group_field($group_field_id, array(
 		'name' => 'Text',
 		'id'   => 'second-title',
 		'type' => 'text',
-		// 'repeatable' => true, // Repeatable fields are supported w/in repeatable groups (for most types)
 	));
 
 	//---------------------------------------- Counter Section Ends------------------------------------------------------//
@@ -875,33 +871,34 @@ function custom_post_type()
 add_action('init', 'custom_post_type', 0);
 
 add_action('cmb2_admin_init', 'cmb2_add_metaboxes_in_testimonial');
-function cmb2_add_metaboxes_in_testimonial() {
+function cmb2_add_metaboxes_in_testimonial()
+{
 
-    /**
-     * Initiate the metabox
-     */
-    $cmb = new_cmb2_box( array(
-        'id'            => 'client-details',
-        'title'         => __( 'Client Details', 'cmb2' ),
-        'object_types'  => array( 'testimonials', ), // Post type
-        'context'       => 'normal',
-        'priority'      => 'high',
-        'show_names'    => true, // Show field names on the left
-        // 'cmb_styles' => false, // false to disable the CMB stylesheet
-        // 'closed'     => true, // Keep the metabox closed by default
-    ) );
-	$cmb->add_field( array(
+	/**
+	 * Initiate the metabox
+	 */
+	$cmb = new_cmb2_box(array(
+		'id'            => 'client-details',
+		'title'         => __('Client Details', 'cmb2'),
+		'object_types'  => array('testimonials',), // Post type
+		'context'       => 'normal',
+		'priority'      => 'high',
+		'show_names'    => true, // Show field names on the left
+		// 'cmb_styles' => false, // false to disable the CMB stylesheet
+		// 'closed'     => true, // Keep the metabox closed by default
+	));
+	$cmb->add_field(array(
 		'name'    => 'Client Name',
 		'id'      => 'client_details_name',
 		'type'    => 'text',
-	) );
+	));
 
-	$cmb->add_field( array(
+	$cmb->add_field(array(
 		'name'    => 'Client Designation',
 		'id'      => 'client_details_designation',
 		'type'    => 'text',
-	) );
-	$cmb->add_field( array(
+	));
+	$cmb->add_field(array(
 		'name'    => 'Client image',
 		'id'      => 'client_details_image',
 		'type'    => 'file',
@@ -916,12 +913,99 @@ function cmb2_add_metaboxes_in_testimonial() {
 		'query_args' => array(
 			// Or only allow gif, jpg, or png images
 			'type' => array(
-			    'image/gif',
-			    'image/jpeg',
-			     'image/png',
-			 ),
+				'image/gif',
+				'image/jpeg',
+				'image/png',
+			),
 		),
 		'preview_size' => 'medium', // Image size to use when previewing in the admin.
-	) );
-	
-	}
+	));
+}
+
+/**
+ * Setup query to show the ‘process’ post type with ‘shortcode'.
+ */
+function blogs_show($atts)
+{
+	//return layout of our cpt process";
+	ob_start();
+	$args = array(
+		'post_type' => 'post',
+		'post_status' => 'publish',
+		'posts_per_page' => -1,
+		'orderby' => 'ID',
+		'order' => 'ASC',
+	);
+	$loop = new WP_Query($args);
+	echo '<div class="row">';
+	while ($loop->have_posts()) : $loop->the_post();
+		$content = get_the_content();
+		$title = get_the_title();
+		$image = get_the_post_thumbnail();
+		echo '<div class="col-lg-4 col-md-6 col-sm-12">';
+		echo '<div class="blog-post-thumb">';
+		echo            '<div class="img">';
+		echo $image;
+		echo '</div>';
+		echo '<div class="blog-content">';
+		echo "<h3><a href='#'>" . $title . "</a></h3>";
+		echo '<div class="text">';
+		echo  $content;
+		echo '</div>';
+		echo '</div>';
+		echo '<a href="#" class="main-button">Read More</a>';
+		echo '</div>';
+		echo '</div>';
+	endwhile;
+	echo '</div>';
+	wp_reset_postdata();
+	$myvariable = ob_get_clean();
+	return $myvariable;
+}
+add_shortcode('blogs', 'blogs_show');
+
+/**
+ * Setup query to show the ‘process’ post type with ‘shortcode'.
+ */
+function testimonials_show($atts)
+{
+	//return layout of our cpt process";
+	ob_start();
+	$args = array(
+		'post_type' => 'testimonials',
+		'post_status' => 'publish',
+		'posts_per_page' => -1,
+		'orderby' => 'ID',
+		'order' => 'ASC',
+	);
+	$loop = new WP_Query($args);
+	echo '<div class="row">';
+	while ($loop->have_posts()) : $loop->the_post();
+		$content = get_the_content();
+		$userimage = wp_get_attachment_image(get_post_meta(get_the_ID(), 'client_details_image_id', 1), 'small');
+		$username = get_post_meta(get_the_ID(), 'client_details_name', true);
+		$userdesignation = get_post_meta(get_the_ID(), 'client_details_designation', true);
+		echo '<div class="col-lg-4 col-md-6 col-sm-12">';
+		echo '<div class="team-item">';
+		echo '<div class="team-content">';
+		echo '<i><img src="'.home_url().'/wp-content/uploads/2022/07/testimonial-icon.png" alt=""></i>';
+		echo '<p>' . $content . '</p>';
+		echo '<div class="user-image">';
+		echo $userimage;
+		echo '</div>';
+		echo  '<div class="team-info">';
+		echo   '<h3 class="user-name">' . $username . '</h3>';
+		echo   '<span>' . $userdesignation . '</span>';
+		echo   '</div>';
+		echo   '</div>';
+		echo   '</div>';
+		echo    '</div>';
+
+	endwhile;
+	echo '</div>';
+	wp_reset_postdata();
+	$myvariable = ob_get_clean();
+	return $myvariable;
+}
+add_shortcode('testimonials', 'testimonials_show');
+add_image_size( 'small', 60, 60 );
