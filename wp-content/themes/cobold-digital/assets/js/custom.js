@@ -67,6 +67,7 @@
 	    var scrollPos = jQuery(document).scrollTop();
 	    jQuery('.nav a').each(function () {
 	        var refElement =jQuery(this).attr("href");
+			console.log('');
 	        if (refElement.position().top <= scrollPos && refElement.position().top + refElement.height() > scrollPos) {
 	            $('.nav ul li a').removeClass("active");
 	            currLink.addClass("active");
