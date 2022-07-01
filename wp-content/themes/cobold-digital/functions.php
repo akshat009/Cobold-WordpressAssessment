@@ -288,6 +288,28 @@ function cmb2_sample_metaboxes()
 		'id'   => 'features-title-description',
 		'type' => 'textarea_small',
 	));
+	$cmb->add_group_field($group_field_id, array(
+		'name'    => 'Add icon',
+		'desc'    => 'Upload an image or enter an URL.',
+		'id'      => 'features_image',
+		'type'    => 'file',
+		// Optional:
+		'options' => array(
+			'url' => true,
+		),
+		'text'    => array(
+			'add_upload_file_text' => 'Add Icon Image'
+		),
+		// query_args are passed to wp.media's library query.
+		'query_args' => array(
+			'type' => array(
+				'image/gif',
+				'image/jpeg',
+				'image/png',
+			),
+		),
+		'preview_size' => 'small',
+	));
 
 
 	//----------------------------------------  Home Features Section Ends------------------------------------------------------//
@@ -436,6 +458,29 @@ function cmb2_sample_metaboxes()
 		'default' => 'Godard pabst prism fam cliche.',
 		'id'   => 'work_progress_description',
 		'type' => 'textarea_small',
+	));
+	$cmb->add_group_field($group_field_id, array(
+		'name'    => 'Add Icon Image',
+		'desc'    => 'Upload an image or enter an URL.',
+		'id'      => 'work_progresst_image',
+		'type'    => 'file',
+		// Optional:
+		'options' => array(
+			'url' => true, 
+		),
+		'text'    => array(
+			'add_upload_file_text' => 'Add Icon Image' // Change upload button text. Default: "Add or Upload File"
+		),
+		// query_args are passed to wp.media's library query.
+		'query_args' => array(
+			// Or only allow gif, jpg, or png images
+			'type' => array(
+				'image/gif',
+				'image/jpeg',
+				'image/png',
+			),
+		),
+		'preview_size' => 'small',
 	));
 
 	//---------------------------------------- Work Progress Section  Ends------------------------------------------------------//
@@ -771,3 +816,112 @@ function cmb2_sample_metaboxes()
 		),
 	));
 }
+
+// Register Custom Post Type
+function custom_post_type()
+{
+
+	$labels = array(
+		'name'                  => _x('Testimonials', 'Post Type General Name', 'cobold_digital'),
+		'singular_name'         => _x('Testimonial', 'Post Type Singular Name', 'cobold_digital'),
+		'menu_name'             => __('Testimonials', 'cobold_digital'),
+		'name_admin_bar'        => __('Testimonials', 'cobold_digital'),
+		'archives'              => __('Testimonial Archives', 'cobold_digital'),
+		'attributes'            => __('Testimonial Attributes', 'cobold_digital'),
+		'parent_item_colon'     => __('Parent Item:', 'cobold_digital'),
+		'all_items'             => __('All Testimonials', 'cobold_digital'),
+		'add_new_item'          => __('Add New Testimonial', 'cobold_digital'),
+		'add_new'               => __('Add New', 'cobold_digital'),
+		'new_item'              => __('New Testimonial', 'cobold_digital'),
+		'edit_item'             => __('Edit Testimonial', 'cobold_digital'),
+		'update_item'           => __('Update Testimonial', 'cobold_digital'),
+		'view_item'             => __('View Testimonial', 'cobold_digital'),
+		'view_items'            => __('View Testimonials', 'cobold_digital'),
+		'search_items'          => __('Search Testimonial', 'cobold_digital'),
+		'not_found'             => __('Not found', 'cobold_digital'),
+		'not_found_in_trash'    => __('Not found in Trash', 'cobold_digital'),
+		'featured_image'        => __('Featured Image', 'cobold_digital'),
+		'set_featured_image'    => __('Set featured image', 'cobold_digital'),
+		'remove_featured_image' => __('Remove featured image', 'cobold_digital'),
+		'use_featured_image'    => __('Use as featured image', 'cobold_digital'),
+		'insert_into_item'      => __('Insert into testimonial', 'cobold_digital'),
+		'uploaded_to_this_item' => __('Uploaded to this testimonial', 'cobold_digital'),
+		'items_list'            => __('Testimonials list', 'cobold_digital'),
+		'items_list_navigation' => __('Testimonials list navigation', 'cobold_digital'),
+		'filter_items_list'     => __('Filter testimonials list', 'cobold_digital'),
+	);
+	$args = array(
+		'label'                 => __('Testimonials', 'cobold_digital'),
+		'description'           => __('Shows the testimonials received by clients', 'cobold_digital'),
+		'labels'                => $labels,
+		'supports'              => array('editor'),
+		'hierarchical'          => false,
+		'public'                => true,
+		'show_ui'               => true,
+		'show_in_menu'          => true,
+		'menu_position'         => 5,
+		'menu_icon'             => 'dashicons-megaphone',
+		'show_in_admin_bar'     => true,
+		'show_in_nav_menus'     => true,
+		'can_export'            => true,
+		'has_archive'           => true,
+		'exclude_from_search'   => false,
+		'publicly_queryable'    => true,
+		'capability_type'       => 'page',
+	);
+	register_post_type('Testimonials', $args);
+	flush_rewrite_rules();
+}
+add_action('init', 'custom_post_type', 0);
+
+add_action('cmb2_admin_init', 'cmb2_add_metaboxes_in_testimonial');
+function cmb2_add_metaboxes_in_testimonial() {
+
+    /**
+     * Initiate the metabox
+     */
+    $cmb = new_cmb2_box( array(
+        'id'            => 'client-details',
+        'title'         => __( 'Client Details', 'cmb2' ),
+        'object_types'  => array( 'testimonials', ), // Post type
+        'context'       => 'normal',
+        'priority'      => 'high',
+        'show_names'    => true, // Show field names on the left
+        // 'cmb_styles' => false, // false to disable the CMB stylesheet
+        // 'closed'     => true, // Keep the metabox closed by default
+    ) );
+	$cmb->add_field( array(
+		'name'    => 'Client Name',
+		'id'      => 'client_details_name',
+		'type'    => 'text',
+	) );
+
+	$cmb->add_field( array(
+		'name'    => 'Client Designation',
+		'id'      => 'client_details_designation',
+		'type'    => 'text',
+	) );
+	$cmb->add_field( array(
+		'name'    => 'Client image',
+		'id'      => 'client_details_image',
+		'type'    => 'file',
+		// Optional:
+		'options' => array(
+			'url' => false, // Hide the text input for the url
+		),
+		'text'    => array(
+			'add_upload_file_text' => 'Add Image' // Change upload button text. Default: "Add or Upload File"
+		),
+		// query_args are passed to wp.media's library query.
+		'query_args' => array(
+			// Or only allow gif, jpg, or png images
+			'type' => array(
+			    'image/gif',
+			    'image/jpeg',
+			     'image/png',
+			 ),
+		),
+		'preview_size' => 'medium', // Image size to use when previewing in the admin.
+	) );
+	
+	}
