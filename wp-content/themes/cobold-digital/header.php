@@ -38,7 +38,7 @@ https://templatemo.com/tm-535-softy-pinko
 
 <body>
 
-	<!-- ***** Preloader Start ****
+	<!-- ***** Preloader Start ****!-->
 	<div id="preloader">
 		<div class="jumper">
 			<div></div>
@@ -47,7 +47,7 @@ https://templatemo.com/tm-535-softy-pinko
 		</div>
 	</div>
 
-	 ***** Preloader End ***** -->
+	<! --***** Preloader End ***** -->
 	<header class="header-area header-sticky">
 		<div class="container">
 			<div class="row">
